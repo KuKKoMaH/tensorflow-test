@@ -33,9 +33,9 @@
         webcam.height = webcam.width / aspectRatio;
       }
     };
-    // navigator.getUserMedia = navigator.getUserMedia ||
-    //   navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
-    //   navigatorAny.msGetUserMedia;
+    navigator.getUserMedia = navigator.getUserMedia ||
+      navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
+      navigatorAny.msGetUserMedia;
 
     if (navigator.getUserMedia) {
       navigator.getUserMedia(
