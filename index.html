@@ -3,13 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+    }
+
+    #webcam {
+      width: 100vh;
+      height: 100vh;
+      display: block;
+    }
+    #result {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #ffffff;
+      font-size: 22px;
+    }
+  </style>
 </head>
 <body>
-<div id="webcam-frame">
-  <div id="result"></div>
-  <video id="webcam" width="224px" height="224px" autoplay playsinline muted></video>
-</div>
-
+<div id="result"></div>
+<video id="webcam" autoplay playsinline muted></video>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 <script>
@@ -73,14 +91,13 @@
     //   navigator.msGetUserMedia);
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ 'video': { facingMode: 'user', width: 224, height: 224 }, 'audio': false })
+      navigator.mediaDevices.getUserMedia({ 'video': {  width: 224, height: 224 }, 'audio': false })
         .then(stream => {
-          console.log('asd');
           webcam.srcObject = stream;
           webcam.addEventListener('loadeddata', () => {
-            adjustVideoSize(
-              webcam.videoWidth,
-              webcam.videoHeight);
+            // adjustVideoSize(
+            //   webcam.videoWidth,
+            //   webcam.videoHeight);
             resolve();
           }, false);
         })
