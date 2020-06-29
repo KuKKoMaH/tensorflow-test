@@ -10,10 +10,11 @@
     }
 
     #webcam {
-      width: 100vh;
+      width: 100vw;
       height: 100vh;
       display: block;
     }
+
     #result {
       position: absolute;
       top: 0;
@@ -91,7 +92,16 @@
     //   navigator.msGetUserMedia);
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ 'video': {  width: 224, height: 224 }, 'audio': false })
+
+
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" }, width: 224, height: 224 },
+        audio: false,
+      })
+        .catch(e => {
+          console.log(e);
+          return navigator.mediaDevices.getUserMedia({ 'video': { width: 224, height: 224 }, 'audio': false });
+        })
         .then(stream => {
           webcam.srcObject = stream;
           webcam.addEventListener('loadeddata', () => {
