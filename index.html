@@ -4,142 +4,62 @@
   <meta charset="UTF-8">
   <meta id="viewport" name="viewport" content="width=device-width, user-scalable=no">
   <title>Title</title>
-  <style>
-    html, body {
-      padding: 0;
-      margin: 0;
-    }
-
-    #webcam {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-
-    #result {
-      padding: 8px 0;
-      background: #000;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      color: #ffffff;
-      font-size: 24px;
-    }
-  </style>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
-<div id="result"></div>
-<video id="webcam" autoplay playsinline muted></video>
+<div class="container">
+  <div id="loader" class="mt-4 mb-4">Загрузка модели
+    <div class="progress ">
+      <div id="loaderProgress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+           aria-valuemax="100"></div>
+    </div>
+  </div>
+
+  <form id="imageForm" action="">
+    <div class="input-group mb-3 mt-4">
+      <input
+        class="form-control"
+        name="src"
+        value="https://static.alfa-mt.ru/alfastatic1024x1024/2020/06/22/5ef0c7060ba830.03510040.jpg"
+      />
+      <div class="input-group-append">
+        <button class="btn btn-primary">Опознать</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img id="image" class="card-img" src="" alt="" crossorigin="anonymous">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <div id="result"></div>
+          <div id="time" class="text-muted text-sm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+<!--<video id="webcam" autoplay playsinline muted></video>-->
+<!--<canvas id="webcam"></canvas>-->
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
-<script>
-  /*! modernizr 3.6.0 (Custom Build) | MIT *
-   * https://modernizr.com/download/?-getusermedia-setclasses !*/
-  !function ( e, n, s ) {
-    function a( e ) {
-      var n = r.className, s = Modernizr._config.classPrefix || "";
-      if (c && (n = n.baseVal), Modernizr._config.enableJSClass) {
-        var a = new RegExp("(^|\\s)" + s + "no-js(\\s|$)");
-        n = n.replace(a, "$1" + s + "js$2");
-      }
-      Modernizr._config.enableClasses && (n += " " + s + e.join(" " + s), c ? r.className.baseVal = n : r.className = n);
-    }
-
-    function o( e, n ) {return typeof e === n;}
-
-    function i() {
-      var e, n, s, a, i, l, r;
-      for (var c in f) if (f.hasOwnProperty(c)) {
-        if (e = [], n = f[c], n.name && (e.push(n.name.toLowerCase()), n.options && n.options.aliases && n.options.aliases.length)) for (s = 0; s < n.options.aliases.length; s++) e.push(n.options.aliases[s].toLowerCase());
-        for (a = o(n.fn, "function") ? n.fn() : n.fn, i = 0; i < e.length; i++) l = e[i], r = l.split("."), 1 === r.length ? Modernizr[r[0]] = a : (!Modernizr[r[0]] || Modernizr[r[0]] instanceof Boolean || (Modernizr[r[0]] = new Boolean(Modernizr[r[0]])), Modernizr[r[0]][r[1]] = a), t.push((a ? "" : "no-") + r.join("-"));
-      }
-    }
-
-    var t        = [], f = [], l = {
-      _version:     "3.6.0",
-      _config:      { classPrefix: "", enableClasses: !0, enableJSClass: !0, usePrefixes: !0 },
-      _q:           [],
-      on:           function ( e, n ) {
-        var s = this;
-        setTimeout(function () {n(s[e]);}, 0);
-      },
-      addTest:      function ( e, n, s ) {f.push({ name: e, fn: n, options: s });},
-      addAsyncTest: function ( e ) {f.push({ name: null, fn: e });},
-    }, Modernizr = function () {};
-    Modernizr.prototype = l, Modernizr = new Modernizr;
-    var r = n.documentElement, c = "svg" === r.nodeName.toLowerCase();
-    Modernizr.addTest("getUserMedia", "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices), i(), a(t), delete l.addTest, delete l.addAsyncTest;
-    for (var d = 0; d < Modernizr._q.length; d++) Modernizr._q[d]();
-    e.Modernizr = Modernizr;
-  }(window, document);
-</script>
-<script type="text/javascript">
-  const webcam = document.getElementById('webcam');
-  const resultEl = document.getElementById('result');
-
-  const initWebcam = () => new Promise(( resolve, reject ) => {
-    const navigatorAny = navigator;
-    const adjustVideoSize = ( width, height ) => {
-      const aspectRatio = width / height;
-      if (width >= height) {
-        webcam.width = aspectRatio * webcam.height;
-      } else if (width < height) {
-        webcam.height = webcam.width / aspectRatio;
-      }
-    };
-    // navigator.getUserMedia = (navigator.getUserMedia ||
-    //   navigator.webkitGetUserMedia ||
-    //   navigator.mozGetUserMedia ||
-    //   navigator.msGetUserMedia);
-
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-
-
-      navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: "environment" }, width: 224, height: 224 },
-        audio: false,
-      })
-        .catch(e => {
-          console.log(e);
-          return navigator.mediaDevices.getUserMedia({ 'video': { width: 224, height: 224 }, 'audio': false });
-        })
-        .then(stream => {
-          webcam.srcObject = stream;
-          webcam.addEventListener('loadeddata', () => {
-            // adjustVideoSize(
-            //   webcam.videoWidth,
-            //   webcam.videoHeight);
-            resolve();
-          }, false);
-        })
-        .catch(reject);
-    } else {
-      reject('navigator.getUserMedia not found');
-    }
-  });
-
-  initWebcam()
-    .then(() => tf.loadGraphModel("cats_and_dogs_imagenet_js/model.json"))
-    .then(model => {
-
-      const predict = () => tf.tidy(() => {
-        const webcamImage = tf.browser.fromPixels(webcam);
-        const batchedImage = webcamImage.expandDims(0);
-        const input = batchedImage.toFloat().div(tf.scalar(127)).sub(tf.scalar(1));
-
-        const result = model.predict(input);
-        const predictions = result.dataSync();
-        console.log(predictions);
-        resultEl.innerText = predictions[0] > .5 ? 'кисулькен' : 'не кисулькен';
-
-        // requestAnimationFrame(predict);
-        setTimeout(predict, 1000);
-      });
-      predict();
-    })
-    .catch(e => console.error(e));
-</script>
+<!--<script src="modernizr.js"></script>-->
+<script src="partnames.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
